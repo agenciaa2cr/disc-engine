@@ -1,5 +1,5 @@
-# node:22-alpine — mesma base já usada pelos outros projetos Node na VPS
-# (a2cr-site, nebras-app), para não introduzir uma imagem nova no host.
+# node:22-alpine — mesma base do disc-engine e dos outros projetos Node já
+# na VPS (a2cr-site, nebras-app).
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json* ./
@@ -14,5 +14,5 @@ ENV NODE_ENV=production
 COPY package.json package-lock.json* ./
 RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
-EXPOSE 4100
+EXPOSE 4200
 CMD ["node", "dist/src/api/server.js"]

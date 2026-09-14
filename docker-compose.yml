@@ -1,0 +1,43 @@
+# HR Suite — convive na mesma VPS que o disc-engine (schema `hr`, o disc
+# usa `disc`) e reaproveita o mesmo Postgres do Supabase self-hosted já
+# em produção. Sobe atrás do mesmo Traefik.
+#
+# Pré-requisitos antes de subir em produção:
+#   1. PG_PASSWORD rotacionada (ver segurança na proposta e no README do disc-engine).
+#   2. db/schema.sql aplicado (schema `hr`, isolado do resto).
+#   3. Decisão de capacidade da VPS resolvida — este serviço + o disc-engine
+#      + as duas instâncias de Supabase já competem por 2 vCPU / 8 GB.
+
+name: hr-suite
+
+services:
+  hr-suite:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hr-suite
+    restart: unless-stopped
+    environment:
+      PG_HOST: supabase-db
+      PG_PORT: "5432"
+      PG_USER: postgres
+      PG_PASSWORD: ${PG_PASSWORD}
+      PG_DATABASE: ${PG_DATABASE:-postgres}
+      PORT: "4200"
+    networks:
+      - hr_net
+      - supabase_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=hr-suite_hr_net"
+      - "traefik.http.routers.hrsuite.rule=Host(`hr.appbuilder.digital`)"
+      - "traefik.http.routers.hrsuite.entrypoints=websecure"
+      - "traefik.http.routers.hrsuite.tls=true"
+      - "traefik.http.routers.hrsuite.tls.certresolver=letsencrypt"
+      - "traefik.http.services.hrsuite.loadbalancer.server.port=4200"
+
+networks:
+  hr_net:
+    driver: bridge
+  supabase_default:
+    external: true

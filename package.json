@@ -1,13 +1,12 @@
 {
-  "name": "disc-engine",
-  "version": "2.0.0",
-  "description": "DISC 2.0 — instrumento, motor de escoragem e motor de laudo determinístico (sem IA)",
+  "name": "hr-suite",
+  "version": "0.1.0",
+  "description": "Suíte de RH estratégico (sem departamento pessoal) — core, R&S, desempenho, clima/NR-01, T&D e analytics",
   "type": "module",
   "private": true,
   "main": "src/index.ts",
   "scripts": {
     "demo": "tsx scripts/demo.ts",
-    "demo:all": "tsx scripts/demo.ts --all-profiles",
     "server": "tsx watch src/api/server.ts",
     "build": "tsc",
     "start": "node dist/src/api/server.js",
