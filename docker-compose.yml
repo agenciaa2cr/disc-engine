@@ -5,7 +5,7 @@ services:
     build:
       context: ./disc-engine
       dockerfile: Dockerfile
-    container_name: disc-server
+    container_name: disc-server-novo
     restart: unless-stopped
     environment:
       PG_HOST: supabase-db
