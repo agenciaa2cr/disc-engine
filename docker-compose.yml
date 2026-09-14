@@ -1,0 +1,58 @@
+name: rh-platform
+
+services:
+  disc-engine:
+    build:
+      context: ./disc-engine
+      dockerfile: Dockerfile
+    container_name: disc-server
+    restart: unless-stopped
+    environment:
+      PG_HOST: supabase-db
+      PG_PORT: "5432"
+      PG_USER: postgres
+      PG_PASSWORD: ${PG_PASSWORD}
+      PG_DATABASE: ${PG_DATABASE:-postgres}
+      PORT: "4100"
+    networks:
+      - rh_net
+      - supabase_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=rh-platform_rh_net"
+      - "traefik.http.routers.disc.rule=Host(`disc.appbuilder.digital`)"
+      - "traefik.http.routers.disc.entrypoints=websecure"
+      - "traefik.http.routers.disc.tls=true"
+      - "traefik.http.routers.disc.tls.certresolver=letsencrypt"
+      - "traefik.http.services.disc.loadbalancer.server.port=4100"
+
+  hr-suite:
+    build:
+      context: ./hr-suite
+      dockerfile: Dockerfile
+    container_name: hr-suite
+    restart: unless-stopped
+    environment:
+      PG_HOST: supabase-db
+      PG_PORT: "5432"
+      PG_USER: postgres
+      PG_PASSWORD: ${PG_PASSWORD}
+      PG_DATABASE: ${PG_DATABASE:-postgres}
+      PORT: "4200"
+    networks:
+      - rh_net
+      - supabase_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=rh-platform_rh_net"
+      - "traefik.http.routers.hrsuite.rule=Host(`hr.appbuilder.digital`)"
+      - "traefik.http.routers.hrsuite.entrypoints=websecure"
+      - "traefik.http.routers.hrsuite.tls=true"
+      - "traefik.http.routers.hrsuite.tls.certresolver=letsencrypt"
+      - "traefik.http.services.hrsuite.loadbalancer.server.port=4200"
+
+networks:
+  rh_net:
+    driver: bridge
+  supabase_default:
+    external: true
