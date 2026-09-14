@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "outDir": "dist",
+    "rootDir": ".",
     "declaration": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true
